@@ -1,9 +1,9 @@
-CELL_WALL = -1
-CELL_CLEAN = 0
-CELL_DIRTY = 1
-CELL_BASE = 2
-width = 7
-height = 7
+CELL_WALL = -1  # так обозначается стена
+CELL_CLEAN = 0  # так обозначается убранная клетка
+CELL_DIRTY = 1  # так обозначается неубранная клетка
+CELL_BASE = 2  # так обозначается подзарядка
+width = 12
+height = 8
 up = [0, -1]
 down = [0, 1]
 right = [1, 0]
@@ -18,9 +18,11 @@ class Robot:
         self.field = field  # поле нашей комнаты
 
     def move(self):
-        self.coord[0] = self.coord[0] + directions[self.dir][0]
-        self.coord[1] = self.coord[1] + directions[self.dir][1]
-        field[self.coord[0]][self.coord[1]] = 0
+        if self.field[self.coord[0]][self.coord[1]] == CELL_DIRTY:
+            field[self.coord[0]][self.coord[1]] = CELL_CLEAN
+        if self.is_free():
+            self.coord[0] = self.coord[0] + directions[self.dir][0]
+            self.coord[1] = self.coord[1] + directions[self.dir][1]
 
     def turn_left(self):
         self.dir = (self.dir - 1) % len(directions)
@@ -126,7 +128,7 @@ class Robot:
 
 
 def make_field(width, height):
-    field = [[1 for x in range(width)] for y in range(height)]
+    field = [[1 for y in range(height)] for x in range(width)]
     field[1][1] = 2
     for x in range(width):
         field[x][0] = -1
@@ -151,7 +153,6 @@ def clean_room(robot):
     robot.turn_right()
     while robot.is_free():
         robot.move()
-    print(robot.is_free_right())
     while robot.is_free_right():
         print_field(robot.field)
         robot.turn_right()
