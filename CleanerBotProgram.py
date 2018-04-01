@@ -13,13 +13,14 @@ directions = [up, right, down, left]
 
 class Robot:
     def __init__(self, a, b, direction, field):
-        self.coord = [a, b]
-        self.dir = direction
-        self.field = field
+        self.coord = [a, b]  # первоначальные координаты робота
+        self.dir = direction  # указатель направления в массиве directions
+        self.field = field  # поле нашей комнаты
 
     def move(self):
         self.coord[0] = self.coord[0] + directions[self.dir][0]
         self.coord[1] = self.coord[1] + directions[self.dir][1]
+        field[self.coord[0]][self.coord[1]] = 0
 
     def turn_left(self):
         self.dir = (self.dir - 1) % len(directions)
@@ -34,10 +35,12 @@ class Robot:
         return (self.dir + 1) % len(directions)
 
     def cell_at_left(self):
-        return self.field[self.coord[0] + self.look_left()[0]][self.coord[1] + self.look_left()[1]]
+        dir_ = self.direction_left()
+        return self.field[self.coord[0] + dir_[0]][self.coord[1] + dir_[1]]
 
     def cell_at_right(self):
-        return self.field[self.coord[0] + self.look_right()[0]][self.coord[1] + self.look_right()[1]]
+        dir_ = self.direction_right()
+        return self.field[self.coord[0] + dir_[0]][self.coord[1] + dir_[1]]
 
     def cell_front(self):
         dir_ = directions[self.dir]
@@ -135,11 +138,43 @@ def make_field(width, height):
 
 
 def print_field(field):
+    print()
     for y in range(height):
         for x in range(width):
             print('{0:2d}'.format(field[x][y]), end=" ")
         print()
 
 
+def clean_room(robot):
+    while robot.is_free():
+        robot.move()
+    robot.turn_right()
+    while robot.is_free():
+        robot.move()
+    print(robot.is_free_right())
+    while robot.is_free_right():
+        print_field(robot.field)
+        robot.turn_right()
+        robot.move()
+        robot.turn_right()
+        while robot.is_dirty():
+            robot.move()
+        robot.turn_left()
+        robot.move()
+        robot.turn_left()
+        while robot.is_free():
+            robot.move()
+    while robot.is_free():
+        robot.move()
+    robot.turn_left()
+    robot.turn_left()
+    while robot.is_free():
+        robot.move()
+
+
 if __name__ == "__main__":
-    print_field(make_field(width, height))
+    field = make_field(width, height)
+    robot = Robot(1, 1, 1, field)
+    print_field(field)
+    clean_room(robot)
+    print_field(field)
