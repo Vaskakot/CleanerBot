@@ -2,8 +2,8 @@ CELL_WALL = -1  # так обозначается стена
 CELL_CLEAN = 0  # так обозначается убранная клетка
 CELL_DIRTY = 1  # так обозначается неубранная клетка
 CELL_BASE = 2  # так обозначается подзарядка
-width = 12
-height = 8
+width = 55
+height = 255
 up = [0, -1]
 down = [0, 1]
 right = [1, 0]
@@ -179,3 +179,4 @@ if __name__ == "__main__":
     print_field(field)
     clean_room(robot)
     print_field(field)
+    print('Координаты робота: ',  robot.coord)
