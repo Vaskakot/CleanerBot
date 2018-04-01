@@ -1,3 +1,7 @@
+CELL_WALL = -1
+CELL_CLEAN = 0
+CELL_DIRTY = 1
+CELL_BASE = 2
 width = 7
 height = 7
 up = [0, -1]
@@ -23,75 +27,96 @@ class Robot:
     def turn_right(self):
         self.dir = (self.dir + 1) % len(directions)
 
+    def look_left(self):
+        return (self.dir - 1) % len(directions)
+
+    def look_right(self):
+        return (self.dir + 1) % len(directions)
+
+    def cell_at_left(self):
+        return self.field[self.coord[0] + self.look_left()[0]][self.coord[1] + self.look_left()[1]]
+
+    def cell_at_right(self):
+        return self.field[self.coord[0] + self.look_right()[0]][self.coord[1] + self.look_right()[1]]
+
+    def cell_front(self):
+        dir_ = directions[self.dir]
+        return self.field[self.coord[0] + dir_[0]][self.coord[1] + dir_[1]]
+
+    def direction_left(self):
+        return directions[self.look_left()]
+
+    def direction_right(self):
+        return directions[self.look_right()]
+
     def is_free(self):
-        if self.field[self.coord[0] + directions[self.dir][0]][self.coord[1] + directions[self.dir][1]] != -1:
+        if self.cell_front() != CELL_WALL:
             return True
         else:
             return False
 
     def is_free_left(self):
-        # TODO: исправить self.dir +- 1 - на деление по модулю иначе будет ошибка
-        if self.field[self.coord[0] + directions[self.dir - 1][0]][self.coord[1] + directions[self.dir - 1][1]] != -1:
+        if self.cell_at_left() != CELL_WALL:
             return True
         else:
             return False
 
     def is_free_right(self):
-        if self.field[self.coord[0] + directions[self.dir + 1][0]][self.coord[1] + directions[self.dir + 1][1]] != -1:
+        if self.cell_at_right() != CELL_WALL:
             return True
         else:
             return False
 
     def is_wall(self):
-        if self.field[self.coord[0] + directions[self.dir][0]][self.coord[1] + directions[self.dir][1]] == -1:
+        if self.cell_front() == CELL_WALL:
             return True
         else:
             return False
 
     def is_wall_left(self):
-        if self.field[self.coord[0] + directions[self.dir - 1][0]][self.coord[1] + directions[self.dir - 1][1]] == -1:
+        if self.cell_at_left() == CELL_WALL:
             return True
         else:
             return False
 
     def is_wall_right(self):
-        if self.field[self.coord[0] + directions[self.dir + 1][0]][self.coord[1] + directions[self.dir + 1][1]] == -1:
+        if self.cell_at_right() == CELL_WALL:
             return True
         else:
             return False
 
     def is_cleaned(self):
-        if self.field[self.coord[0] + directions[self.dir][0]][self.coord[1] + directions[self.dir][1]] == 0:
+        if self.cell_front() == CELL_CLEAN:
             return True
         else:
             return False
 
     def is_cleaned_left(self):
-        if self.field[self.coord[0] + directions[self.dir - 1][0]][self.coord[1] + directions[self.dir - 1][1]] == 0:
+        if self.cell_at_left() == CELL_CLEAN:
             return True
         else:
             return False
 
     def is_cleaned_right(self):
-        if self.field[self.coord[0] + directions[self.dir + 1][0]][self.coord[1] + directions[self.dir + 1][1]] == 0:
+        if self.cell_at_right() == CELL_CLEAN:
             return True
         else:
             return False
 
     def is_dirty(self):
-        if self.field[self.coord[0] + directions[self.dir][0]][self.coord[1] + directions[self.dir][1]] == 1:
+        if self.cell_front() == CELL_DIRTY:
             return True
         else:
             return False
 
     def is_dirty_left(self):
-        if self.field[self.coord[0] + directions[self.dir - 1][0]][self.coord[1] + directions[self.dir - 1][1]] == 1:
+        if self.cell_at_left() == CELL_DIRTY:
             return True
         else:
             return False
 
     def is_dirty_right(self):
-        if self.field[self.coord[0] + directions[self.dir + 1][0]][self.coord[1] + directions[self.dir + 1][1]] == 1:
+        if self.cell_at_right() == CELL_DIRTY:
             return True
         else:
             return False
@@ -117,4 +142,4 @@ def print_field(field):
 
 
 if __name__ == "__main__":
-    print_field(run_me(width, height))
+    print_field(make_field(width, height))
